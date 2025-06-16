@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - cd frontend
+      - npm install
+  build:
+    commands:
+      - npm run build
+  post_build:
+    commands:
+      - echo "Uploading HTML files"
+      - aws s3 sync dist/ s3://omegahadijah-rtt/ --delete --exclude "*" --include "*.html" --content-type "text/html"
+      - echo "Uploading JS files"
+      - aws s3 sync dist/ s3://omegahadijah-rtt/ --exclude "*" --include "*.js" --content-type "application/javascript"
+      - echo "Uploading CSS files"
+      - aws s3 sync dist/ s3://omegahadijah-rtt/ --exclude "*" --include "*.css" --content-type "text/css"
+      - echo "Uploading everything else"
+      - aws s3 sync dist/ s3://omegahadijah-rtt/ --exclude "*.html" --exclude "*.js" --exclude "*.css"
+  # post_build:
+  #   commands:
+  #     - echo "Syncing files to S3 with proper content-types..."
+  #     - aws s3 sync dist s3://omegahadijah-rtt/ --delete --content-type text/html --exclude "*" --include "*.html"
+# artifacts:
+#   files:
+#     - '**/*'
+#   base-directory: frontend/dist
