@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - npm install
+  build:
+    commands:
+      - cd backend
+      - npm install aws-sdk uuid jsonwebtoken jwks-rsa
+      - cd ..
+      - zip -r latest.zip backend/*
+      - aws s3 cp latest.zip s3://codebuild-us-east-2-${AWS_ACCOUNT_ID}/latest.zip
+  post_build:
+    commands:
+      - aws cloudformation deploy --template-file cloudformation-template.yml --stack-name GameBackendStack --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --parameter-overrides LambdaRoleArn=$LAMBDA_ROLE_ARN
+artifacts:
+  files:
+    - latest.zip
