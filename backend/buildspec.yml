@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - zip -r function.zip backend/*
-      - aws s3 cp function.zip s3://codebuild-us-east-2-${AWS_ACCOUNT_ID}/function.zip
+      - aws s3 cp function.zip s3://ttt-backend-bucket/function.zip
 artifacts:
   files:
-    - function.zip
+    - backend/function.zip
