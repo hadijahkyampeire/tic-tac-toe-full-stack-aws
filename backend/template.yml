@@ -53,7 +53,103 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: $request.body.action
 
-  # ... (Your routes, integrations, IAM roles unchanged)
+  # Lambda Permission for WebSocket to invoke it
+  WebSocketLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt WebSocketHandler.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebSocketApi}/*/*/@*
+
+
+  # Integration
+  WebSocketIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref WebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebSocketHandler.Arn}/invocations
+
+  # WebSocket Routes
+  WebSocketConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  WebSocketDisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  WebSocketJoinRoomRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: joinRoom
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  WebSocketMakeMoveRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: makeMove
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  WebSocketLeaveRoomRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: leaveRoom
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  WebSocketRestartRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: restart
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  WebSocketGetStatsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref WebSocketApi
+      RouteKey: getStats
+      AuthorizationType: NONE
+      Target: !Join [ "/", [ "integrations", !Ref WebSocketIntegration ] ]
+
+  # Deployment & Stage
+  WebSocketDeployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - WebSocketConnectRoute
+      - WebSocketDisconnectRoute
+      - WebSocketJoinRoomRoute
+      - WebSocketMakeMoveRoute
+      - WebSocketLeaveRoomRoute
+      - WebSocketRestartRoute
+      - WebSocketGetStatsRoute
+    Properties:
+      ApiId: !Ref WebSocketApi
+
+  WebSocketStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: production
+      ApiId: !Ref WebSocketApi
+      DeploymentId: !Ref WebSocketDeployment
+      AutoDeploy: true
+
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role

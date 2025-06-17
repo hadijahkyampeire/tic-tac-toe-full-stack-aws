@@ -8,7 +8,7 @@ const CONNECTIONS_TABLE = "Connections";
 const USERS_TABLE = "UserStats";
 const apiGateway = new AWS.ApiGatewayManagementApi({
   apiVersion: "2018-11-29",
-  endpoint: "821gxv78hl.execute-api.us-east-2.amazonaws.com/production",
+  endpoint: "u7yrxz3tbd.execute-api.us-east-1.amazonaws.com/production",
 });
 
 exports.handler = async (event) => {

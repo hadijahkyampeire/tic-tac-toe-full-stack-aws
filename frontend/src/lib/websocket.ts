@@ -1,4 +1,4 @@
-const WEBSOCKET_URL = 'wss://821gxv78hl.execute-api.us-east-2.amazonaws.com/production';
+const WEBSOCKET_URL = 'wss://u7yrxz3tbd.execute-api.us-east-1.amazonaws.com/production';
 
 let socket: WebSocket | null = null;
 let gamePageListeners: ((data: unknown) => void)[] = [];
