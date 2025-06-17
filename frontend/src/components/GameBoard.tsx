@@ -52,7 +52,7 @@ export const GameBoard = ({
       </Typography>
       <Box my={2}>
         {winner ? (
-          <Typography>Game over</Typography>
+          <Typography color='secondary' fontWeight='bold'>Game over!!!</Typography>
         ) : (
           <Typography>{currentTurn}'s turn</Typography>
         )}
