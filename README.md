@@ -12,6 +12,8 @@ A fully serverless web-based game where users must sign in to play. Their scores
 - Framework: **ReactJS**
 - Hosted on **Amazon S3** with **CloudFront** CDN.
 
+## Test Live App
+- [Link](https://d2w7p8nid3o5t5.cloudfront.net/)
 #### Backend
 - Language: Node.js
 - **AWS Lambda** functions for game logic and APIs.
